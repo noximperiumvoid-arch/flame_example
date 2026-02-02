@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flame/game.dart';
+import 'screens/menu_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/game_screen.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const SpaceShooterApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class SpaceShooterApp extends StatelessWidget {
+  const SpaceShooterApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
+    return MaterialApp(
+      title: 'Space Shooter',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.blue,
+        fontFamily: 'Inter',
       ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MenuScreen(),
+        '/settings': (context) => const SettingsScreen(),
+        '/game': (context) => const GameScreen(),
+      },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

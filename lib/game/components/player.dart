@@ -3,9 +3,10 @@ import 'package:flame/collisions.dart';
 import '../space_shooter_game.dart';
 import 'projectile.dart';
 import 'enemy.dart';
+import 'package:flutter/material.dart';
 import 'dart:math';
 
-class Player extends SpriteComponent
+class Player extends PositionComponent
     with HasGameRef<SpaceShooterGame>, CollisionCallbacks {
   static const double _speed = 300;
   Vector2? _targetPosition;
@@ -16,15 +17,38 @@ class Player extends SpriteComponent
 
   @override
   Future<void> onLoad() async {
-    sprite = await gameRef.loadSprite('player_ship.png');
-    size = Vector2.all(64);
-    position = gameRef.size / 2;
+    print('Loading player sprite...');
+    try {
+      // sprite = await gameRef.loadSprite('player_ship.jpg');
+      // For testing visibility:
+      final paint = Paint()..color = Colors.red;
+      size = Vector2.all(100);
+      // Add a simple rectangle component to see if it renders
+      add(RectangleComponent(size: size, paint: paint));
+      size = Vector2.all(
+        512,
+      ); // This line was already there and sets the size after the RectangleComponent
+      // print(
+      //   'Player sprite loaded: ${sprite?.image.width}x${sprite?.image.height}',
+      // );
+    } catch (e) {
+      print('Error loading player sprite: $e');
+    }
+    // size = Vector2.all(512); // This line is now after the RectangleComponent setup
     add(RectangleHitbox());
+    print('Player internal position: $position');
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (gameRef.size.x == 0 || gameRef.size.y == 0) return;
+
+    // Initial position if at (0,0) and gameRef has size
+    if (position == Vector2.zero() && gameRef.size.length > 0) {
+      position = gameRef.size / 2;
+    }
 
     // Mouse follow
     if (_targetPosition != null) {
@@ -73,9 +97,8 @@ class Player extends SpriteComponent
       speed: 400,
       source: ProjectileSource.player,
       position: position.clone(),
-      sprite: await gameRef.loadSprite('projectile.png'),
       size: Vector2.all(16),
-    );
+    )..priority = 15;
     gameRef.add(projectile);
   }
 
@@ -84,8 +107,7 @@ class Player extends SpriteComponent
     super.onCollision(intersectionPoints, other);
     if (other is Enemy ||
         (other is Projectile && other.source == ProjectileSource.enemy)) {
-      // Handle player hit (e.g., game over or lose life)
-      // For now, just print
+      // Handle player hit
       print("Player hit!");
     }
   }

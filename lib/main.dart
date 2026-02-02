@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flame/game.dart';
 import 'screens/menu_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/game_screen.dart';
 
+import 'package:flame/flame.dart';
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Flame.images.prefix = 'assets/images/';
   runApp(const SpaceShooterApp());
 }
 

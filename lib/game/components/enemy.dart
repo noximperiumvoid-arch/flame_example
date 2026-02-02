@@ -3,30 +3,35 @@ import 'package:flame/collisions.dart';
 import '../space_shooter_game.dart';
 import 'projectile.dart';
 import 'player.dart';
+import 'package:flutter/material.dart';
 import 'dart:math';
 
-class Enemy extends SpriteComponent
+class Enemy extends PositionComponent
     with HasGameRef<SpaceShooterGame>, CollisionCallbacks {
   static const double _speed = 50;
   double _shootTimer = 0;
   final double _shootInterval = 2.0 + Random().nextDouble() * 2.0;
 
+  double _elapsedTime = 0;
+
   Enemy({required super.position}) : super(anchor: Anchor.center);
 
   @override
   Future<void> onLoad() async {
-    sprite = await gameRef.loadSprite('enemy_ship.png');
+    final paint = Paint()..color = Colors.blue;
     size = Vector2.all(64);
+    add(RectangleComponent(size: size, paint: paint));
     add(RectangleHitbox());
   }
 
   @override
   void update(double dt) {
     super.update(dt);
+    _elapsedTime += dt;
 
     // Random simple movement downwards
     position.y += _speed * dt;
-    position.x += sin(gameRef.elapsedSeconds * 2) * 20 * dt;
+    position.x += sin(_elapsedTime * 2) * 20 * dt;
 
     if (position.y > gameRef.size.y + 50) {
       removeFromParent();
@@ -54,7 +59,6 @@ class Enemy extends SpriteComponent
       speed: 150,
       source: ProjectileSource.enemy,
       position: position.clone(),
-      sprite: await gameRef.loadSprite('projectile.png'),
       size: Vector2.all(16),
     );
     gameRef.add(projectile);

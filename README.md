@@ -1,3 +1,3 @@
 # flame_example
 
-TEST 2
+A new Flutter project.
